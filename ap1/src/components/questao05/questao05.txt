@@ -1,0 +1,56 @@
+Props drilling é um problema que surge quando ao passar dados de um componente ao outro via props, ou seja, na inicialização do componente filho são enviados dados que serão utilizados dentro daquele componente que foram repassados via componente pai, com esse problema, a medida que mais variaveis e componentes utilziados gera problemas de compreensão do código pois ele se torna cada vez mais difícil de ser lido e compreendido com facilidade, gerando o problema de legibilidadae, com isso o UseContext do React ajuda pois ele utiliza o Provider onde especifica quem é o provedor dos dados a serem passados para componentes abaixo na árvore e os componentes recebendos os dados precisam utilizar o Consumer para poder consumir os dados de maneira mais organizada.
+
+exemplo props drilling: 
+import React from 'react';
+
+// ComponenteB.js
+function ComponenteB({ usuario }) {
+  return <h1>Olá, {usuario}!</h1>;
+}
+
+// ComponenteA.js
+function ComponenteA({ usuario }) {
+  return <ComponenteB usuario={usuario} />;
+}
+
+// App.js
+function App() {
+  const usuario = "Maria";
+
+  return <ComponenteA usuario={usuario} />;
+}
+
+export default App;
+
+
+exemplo use effect:
+import React, { createContext, useContext } from 'react';
+
+// 1. Criar o Contexto
+const UsuarioContext = createContext();
+
+// ComponenteB.js
+function ComponenteB() {
+  // 4. Usar o contexto para acessar o valor
+  const usuario = useContext(UsuarioContext);
+  return <h1>Olá, {usuario}!</h1>;
+}
+
+// ComponenteA.js
+function ComponenteA() {
+  return <ComponenteB />;
+}
+
+// App.js
+function App() {
+  const usuario = "Maria";
+
+  // 3. Prover o contexto para os componentes filhos
+  return (
+    <UsuarioContext.Provider value={usuario}>
+      <ComponenteA />
+    </UsuarioContext.Provider>
+  );
+}
+
+export default App;
